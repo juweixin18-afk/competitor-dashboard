@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>竞品态势感知 · 云端工作台</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>竞品异常日报 v4</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f0f2f5;color:#2c3e50}
@@ -11,6 +12,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .hdr h1{font-size:22px;font-weight:700}.hdr .sub{opacity:.8;font-size:12px;margin-top:3px}
 .top-bar{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
 .top-bar select{padding:7px 12px;border-radius:8px;border:2px solid #d0d0d0;font-size:13px;font-weight:600;background:#fff;cursor:pointer}
+.sev-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .sbtn{padding:4px 12px;border-radius:14px;border:2px solid #d0d0d0;background:#fff;font-size:11px;cursor:pointer;font-weight:500;transition:all .12s}
 .sbtn:hover{border-color:#1a237e}.sbtn.on{color:#fff;border-color:transparent}
 .sbtn.sa.on{background:#1a237e}.sbtn.sh.on{background:#e74c3c}.sbtn.sm.on{background:#f39c12}.sbtn.si.on{background:#3498db}.sbtn.ss.on{background:#888}
@@ -26,15 +28,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .cal-dot.h{background:#e74c3c}.cal-dot.m{background:#f39c12}.cal-dot.i{background:#3498db}
 .daily-summary{background:#fff;border-radius:10px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.04);overflow:hidden}
 .sr{padding:10px 16px;font-size:13px;line-height:1.7;border-bottom:1px solid #f0f0f0}.sr:last-child{border-bottom:none}
-.sb{font-weight:700;font-size:12px;margin-right:6px}.si{margin:2px 0 2px 20px;font-size:12px;color:#555}
-.pl{color:#1a237e;text-decoration:none;font-weight:500}
+.sb{font-weight:700;font-size:12px;margin-right:6px}
+.si{margin:2px 0 2px 20px;font-size:12px;color:#555}.si a,.pl{color:#1a237e;text-decoration:none;font-weight:500}
 .sh{background:#fef5f5;border-left:4px solid #e74c3c}.sm{background:#fffdf5;border-left:4px solid #f39c12}
 .si2{background:#f5f8fc;border-left:4px solid #3498db}.sw{background:#fffaf5;border-left:4px solid #e67e22;font-size:12px}
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:14px}
 .kpi{background:#fff;border-radius:10px;padding:12px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
 .kpi .kv{font-size:20px;font-weight:700;color:#1a237e}.kpi .kl{font-size:10px;color:#888;margin-top:3px}
 .kpi.g .kv{color:#27ae60}.kpi.o .kv{color:#e67e22}
-.section{margin-bottom:18px}.section-title{font-size:15px;font-weight:700;margin-bottom:8px;cursor:pointer}
+.section{margin-bottom:18px}.section-title{font-size:15px;font-weight:700;margin-bottom:8px}
 .card{background:#fff;border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
 .card-img{flex-shrink:0;width:80px;height:80px;border-radius:8px;overflow:hidden;background:#f8f8f8;display:flex;align-items:center;justify-content:center}
 .card-img img{width:100%;height:100%;object-fit:contain}.card-info{flex:1;min-width:0}
@@ -43,10 +45,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
 .conf-high{background:#eafaf1;color:#27ae60;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:600;margin-left:4px}
 .conf-low{background:#fef9e7;color:#b7950b;padding:2px 6px;border-radius:8px;font-size:10px;font-weight:600;margin-left:4px}
-.card-sn{font-size:14px;font-weight:700;color:#1a237e;margin-bottom:2px}.card-fn{font-size:10px;color:#999;margin-bottom:3px;line-height:1.3}
-.metrics{display:flex;flex-wrap:wrap;gap:4px}
+.card-sn{font-size:14px;font-weight:700;color:#1a237e;margin-bottom:2px}
+.card-fn{font-size:10px;color:#999;margin-bottom:3px;line-height:1.3}.metrics{display:flex;flex-wrap:wrap;gap:4px}
 .met{background:#fff;border-radius:5px;padding:2px 7px;font-size:10px;box-shadow:0 1px 2px rgba(0,0,0,0.03)}
-.met .mk{color:#999}.met .mv{font-weight:600}.met .mup{color:#e74c3c;font-weight:600}.met .mdn{color:#27ae60;font-weight:600}.met .mwarn{color:#e67e22;font-weight:600}
+.met .mk{color:#999}.met .mv{font-weight:600}
+.met .mup{color:#e74c3c;font-weight:600}.met .mdn{color:#27ae60;font-weight:600}.met .mwarn{color:#e67e22;font-weight:600}
 .mini-trend{display:flex;align-items:flex-end;gap:2px;height:32px;padding:2px 0;margin-top:6px}
 .mtw{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end}
 .mtb{width:100%;max-width:18px;border-radius:2px 2px 0 0;min-height:2px}.mtb.n{background:#d5d8e8}.mtb.p{background:#e74c3c}.mtb.t{box-shadow:0 0 0 2px #1a237e}
@@ -55,7 +58,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .insight-panel h3{font-size:13px;color:#1a237e;margin-bottom:8px}
 .stg-item{padding:8px 12px;margin-bottom:6px;border-radius:8px;background:#f8f9fc;border-left:3px solid #1a237e}
 .stg-item .ss{font-size:13px;font-weight:700;color:#1a237e;margin-bottom:3px}.stg-item .sd{font-size:12px;color:#555;line-height:1.5}
-.stg-item .sa{font-size:11px;color:#27ae60;margin-top:5px;padding:5px 8px;background:#eafaf1;border-radius:6px;line-height:1.4}.stg-item .sa::before{content:"💡 ";font-weight:700}
+.stg-item .sa{font-size:11px;color:#27ae60;margin-top:5px;padding:5px 8px;background:#eafaf1;border-radius:6px;line-height:1.4}
+.stg-item .sa::before{content:"💡 ";font-weight:700}
 .cat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:14px}
 .cat-card{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
 .cat-card .cn{font-size:13px;font-weight:700;color:#1a237e;margin-bottom:6px}
@@ -72,9 +76,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .pi .p-price-row .drop{color:#27ae60;font-weight:600;margin-left:3px}.pi .p-price-row .hike{color:#e74c3c;font-weight:600;margin-left:3px}
 .pi .p-note{font-size:8px;color:#e67e22;font-weight:500;margin-top:1px}
 .seller-toggle{padding:8px 14px;background:#f8f9fa;border-radius:8px;cursor:pointer;font-size:12px;color:#666;margin-bottom:6px;user-select:none}
-.seller-toggle:hover{background:#eef0f5}.seller-toggle.open .st-arrow{transform:rotate(90deg)}.seller-toggle .st-arrow{display:inline-block;transition:transform .2s}
-.seller-detail{display:none;padding:6px 0}.seller-detail.show{display:block}.hide{display:none}
-.sd-item{font-size:11px;padding:4px 0;color:#555;display:flex;align-items:center;gap:8px}.sd-img{width:36px;height:36px;border-radius:4px;object-fit:contain;background:#f8f8f8;flex-shrink:0}
+.seller-toggle:hover{background:#eef0f5}.seller-toggle.open .st-arrow{transform:rotate(90deg)}.seller-toggle .st-arrow{display:inline-block;transition:transform .2s}.st-arrow.open{transform:rotate(90deg)}.hide{display:none}
+.seller-detail{display:none;padding:6px 0}.seller-detail.show{display:block}
+.sd-item{font-size:11px;padding:4px 0;color:#555;display:flex;align-items:center;gap:8px}
+.sd-img{width:36px;height:36px;border-radius:4px;object-fit:contain;background:#f8f8f8;flex-shrink:0}
 .sd-info{flex:1;line-height:1.4}.sd-info a{color:#1a237e;text-decoration:none}
 .gh-row{display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
 .fbtn{padding:4px 12px;border-radius:14px;border:2px solid #d0d0d0;background:#fff;font-size:11px;cursor:pointer;font-weight:500;transition:all .12s}
@@ -84,15 +89,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .modal-box h3{font-size:15px;margin-bottom:5px;color:#1a237e}.modal-close{float:right;background:none;border:none;font-size:18px;cursor:pointer;color:#999}
 .empty-state{text-align:center;padding:50px 20px;color:#999}
 .alert-global{padding:12px 16px;border-radius:8px;margin-bottom:8px;font-size:13px;line-height:1.6}
-.ag-high{background:#fde8e8;border-left:4px solid #e74c3c;color:#922}.ag-medium{background:#fff8e1;border-left:4px solid #f39c12;color:#960}
-.loading{text-align:center;padding:40px;color:#999}.loading::after{content:"...";animation:dots 1.5s infinite}@keyframes dots{0%,20%{content:"."}40%{content:".."}60%,100%{content:"..."}}
-.version{font-size:10px;color:#999;text-align:center;padding:10px}
-.st-arrow.open{transform:rotate(90deg)}
+.ag-high{background:#fde8e8;border-left:4px solid #e74c3c;color:#922}
+.ag-medium{background:#fff8e1;border-left:4px solid #f39c12;color:#960}
 </style>
 </head>
 <body>
 <div class="c">
-<div class="hdr"><h1>📊 竞品态势感知 · 云端工作台</h1><div class="sub">Walmart US · 1P/WFS/3P · 按需加载</div></div>
+<div class="hdr"><h1>📊 竞品态势感知 v4.1 "天眼" · <span id="ver"></span></h1><div class="sub">5-6月 · Walmart US · 1P/WFS/3P三渠监控 · 46天全量</div></div>
 <div class="top-bar">
   <select id="brandSel" onchange="onBrandChange(this.value)"><option value="all">全部品牌</option></select>
   <div class="sev-row">
@@ -105,245 +108,550 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 </div>
 <div id="calWrap"></div>
 <div class="daily-summary" id="summary"></div>
-<div id="content"><div class="loading">加载中</div></div>
-<div class="version">云端工作台 v1.0 · 数据按需加载</div>
+<div id="content"></div>
+<div class="modal-overlay" id="trendModal" onclick="if(event.target===this)closeTrend()"><div class="modal-box" id="trendMC"></div></div>
+<div class="empty-state" style="padding:16px;font-size:10px;color:#aaa">云端版 · <span id="footerInfo"></span></div>
 </div>
-
 <script>
-// ===== CORE (same as v4_js.js but with fetch-based data loading) =====
-const BASE = "https://juweixin18-afk.github.io/competitor-dashboard/data/";
-const COMP_BRANDS = new Set(["edx","CONCETTA","Bestier","pinmoco","Satifur","Amadwell"]);
-const LCOL={high:"#e74c3c",medium:"#f39c12",info:"#3498db"};
-const LBG={high:"#fdf0ef",medium:"#fef9e7",info:"#ebf5fb"};
-const LBD={high:"#e74c3c",medium:"#f39c12",info:"#3498db"};
-const TITLE_MAP={price_drop_surge:"降价冲量",price_drop_boost:"降价促量",sales_surge:"销量暴增",sales_collapse:"销量骤跌",seller_change:"卖家/渠道变更",price_drop:"降价"};
-const CH_ICON={WFS:"✅",_1P:"🏪",_3P:"⚠️"};
-const CH_LABEL={WFS:"WFS",_1P:"1P",_3P:"3P"};
-const RULE_ORDER={price_drop_boost:1,sales_surge_flat_price:2,sales_surge:2,sales_collapse:3,seller_change:4,price_drop_surge:5,price_drop:6};
-const srt = (a,b) => {const key=x=>{const base=(RULE_ORDER[x.rule]||9)*10;return x.channel==="WFS"?base:base+1};const d=key(a)-key(b);if(d!==0)return d;const sa=parseInt((a.metrics&&a.metrics.todaySales)||0),sb=parseInt((b.metrics&&b.metrics.todaySales)||0);return sb-sa;};
+let REPORTS=[];let INDEX=[];let curIdx=0,curBrand="all",curSev="all",curGal="all",curMo="";const BASE="https://juweixin18-afk.github.io/competitor-dashboard/data/";async function loadDay(d){const r=await fetch(BASE+d.replace(/\//g,"-")+".json");REPORTS=await r.json();curIdx=0;render();cal();}async function init2(){const r=await fetch(BASE+"index.json");const fi=await r.json();INDEX=fi.reports;const bs=document.getElementById("brandSel");(fi.brands||[]).sort((a,b)=>{const ac=COMP_BRANDS.has(a)?0:1,bc=COMP_BRANDS.has(b)?0:1;if(ac!==bc)return ac-bc;return a.localeCompare(b);}).forEach(b=>{const o=document.createElement("option");o.value=b;o.textContent=b+(COMP_BRANDS.has(b)?" 🎯":"");bs.appendChild(o)});let li=INDEX.length-1;while(li>0&&INDEX[li].summary.totalSales===0)li--;curMo=INDEX[li].date.replace(/(\d+\/\d+)\/.*/,"\$1");await loadDay(INDEX[li].date);document.getElementById("footerInfo").textContent=INDEX.length+"天 · "+fi.brands.length+"品牌";}
 
-let curIdx=0,curBrand="all",curSev="all",curGal="all",curMo="2026/6";
-let REPORTS=[],INDEX=[];
+const COMP_BRANDS = new Set(["edx","CONCETTA","Bestier","pinmoco","Satifur","Amadwell"]);
+const LCOL = {high:"#e74c3c",medium:"#f39c12",info:"#3498db"};
+const LBG  = {high:"#fdf0ef",medium:"#fef9e7",info:"#ebf5fb"};
+const LBD  = {high:"#e74c3c",medium:"#f39c12",info:"#3498db"};
+const TITLE_MAP = {price_drop_surge:"降价冲量",price_drop_boost:"降价促量",sales_surge:"销量暴增",sales_collapse:"销量骤跌",seller_change:"卖家/渠道变更",price_drop:"降价"};
+const SIGNAL_MAP = {multi_price_drop:"📦 多款降价冲量",single_price_drop:"💰 单品降价",switch_to_1p:"🏪 切换1P",suspected_ads:"📢 疑似投流",all_clear:"✅ 整体平稳",scattered:"📊 个别变动"};
+const CH_ICON = {WFS:"✅",_1P:"🏪",_3P:"⚠️"};
+const CH_LABEL = {WFS:"WFS",_1P:"1P",_3P:"3P"};
+const RULE_ORDER = {price_drop_boost:1,sales_surge_flat_price:2,sales_surge:2,sales_collapse:3,seller_change:4,price_drop_surge:5,price_drop:6};
+const srt = (a,b) => {
+  // Primary: rule order, with WFS sub-priority
+  const key = x => {const base=(RULE_ORDER[x.rule]||9)*10;return x.channel==="WFS"?base:base+1;};
+  const d = key(a)-key(b); if(d!==0) return d;
+  // Secondary: higher sales first
+  const sa=parseInt((a.metrics&&a.metrics.todaySales)||0),sb=parseInt((b.metrics&&b.metrics.todaySales)||0);
+  return sb-sa;
+};
+
+let curIdx = 0, curBrand = "all", curSev = "all", curGal = "all", curMo = "";
 
 function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 function fmtUnit(s){return(s||"").toString().replace(/u$/,"单");}
 function chKey(ch){return ch==="1P"?"_1P":ch==="3P"?"_3P":ch;}
 
-async function loadData(dateKey){
-  document.getElementById("content").innerHTML='<div class="loading">加载中</div>';
-  const file=dateKey.replace(/\//g,"-")+".json";
-  const resp=await fetch(BASE+file);
-  const data=await resp.json();
-  REPORTS=data;
-  curIdx=0;
-  render();
-  cal();
-}
-
-async function init(){
-  const resp=await fetch(BASE+"index.json");
-  const fullIndex=await resp.json();
-  INDEX=fullIndex.reports;
-  const allBrands=fullIndex.brands||[];
-  // Populate brand selector: competitors first
-  const bs=document.getElementById("brandSel");
-  const sorted=allBrands.sort((a,b)=>{const ac=COMP_BRANDS.has(a)?0:1,bc=COMP_BRANDS.has(b)?0:1;if(ac!==bc)return ac-bc;return a.localeCompare(b);});
-  sorted.forEach(b=>{const opt=document.createElement("option");opt.value=b;opt.textContent=b+(COMP_BRANDS.has(b)?" 🎯":"");bs.appendChild(opt);});
-  // Set curMo from last date
-  const lastDate=INDEX[INDEX.length-1].date;
-  curMo=lastDate.replace(/(\d+\/\d+)\/.*/,"$1");
-  // Load last day with sales
-  let lastIdx=INDEX.length-1;
-  while(lastIdx>0&&INDEX[lastIdx].summary.totalSales===0)lastIdx--;
-  await loadData(INDEX[lastIdx].date);
-  cal();
+function getFilteredReports(){
+  if(curBrand==="all") return REPORTS;
+  return REPORTS.map(r => {
+    const prods = (r.products||[]).filter(p => p.brand===curBrand);
+    const ids = new Set(prods.map(p => p.itemId));
+    const fa = arr => (arr||[]).filter(a => ids.has(a.itemId));
+    const anom2 = {high:fa(r.anomalies.high),medium:fa(r.anomalies.medium),info:fa(r.anomalies.info),all:fa(r.anomalies.all)};
+    return {date:r.date,summary:r.summary,products:prods,anomalies:anom2,_strategy:r._strategy,_globalAlerts:r._globalAlerts};
+  });
 }
 
 function cal(){
-  const dm={};
-  INDEX.forEach((r,i)=>{dm[r.date]={idx:i,h:r.summary.anomaliesHigh,m:r.summary.anomaliesMedium-r.summary.anomaliesMedium,i:r.summary.anomaliesInfo}});
-  const p=curMo.split("/"),yr=+p[0],mo=+p[1];
-  const fd=new Date(yr,mo-1,1).getDay(),dim=new Date(yr,mo,0).getDate();
-  const dow=["日","一","二","三","四","五","六"];
-  let h='<div class="cal-month"><div class="cm-h"><button onclick="navMo(-1)">◀</button>'+yr+"年"+mo+"月<button onclick="navMo(1)">▶</button></div><div class="cal-grid">';
-  dow.forEach(d=>h+='<div class="cal-dow">'+d+"</div>");
-  for(let e=0;e<fd;e++)h+='<div style="width:28px;height:28px"></div>';
+  const RR = getFilteredReports();
+  const dm = {};
+  RR.forEach((r,i) => {dm[r.date]={idx:i,h:r.anomalies.high.length,m:r.anomalies.medium.filter(a=>a.rule!=="seller_change").length,i:r.anomalies.info.length}});
+  const p = curMo.split("/"), yr = +p[0], mo = +p[1];
+  const fd = new Date(yr,mo-1,1).getDay(), dim = new Date(yr,mo,0).getDate();
+  const dow = ["日","一","二","三","四","五","六"];
+  let h = '<div class="cal-month"><div class="cm-h"><button onclick="navMo(-1)">◀</button>'+yr+'年'+mo+'月<button onclick="navMo(1)">▶</button></div><div class="cal-grid">';
+  dow.forEach(d => h += '<div class="cal-dow">'+d+'</div>');
+  for(let e=0;e<fd;e++) h += '<div style="width:28px;height:28px"></div>';
   for(let day=1;day<=dim;day++){
-    const ds=yr+"/"+mo+"/"+day,inf=dm[ds],isT=inf&&inf.idx===curIdx,has=!!inf;
-    let dots="";
+    const ds = yr+"/"+mo+"/"+day, inf = dm[ds], isT = inf && inf.idx===curIdx, has = !!inf;
+    let dots = "";
     if(inf){if(inf.h>0)dots+='<span class="cal-dot h"></span>';if(inf.m>0)dots+='<span class="cal-dot m"></span>';if(inf.i>0)dots+='<span class="cal-dot i"></span>';}
-    if(isT)h+='<a class="cal-day today" href="javascript:void(0)" onclick="goToDate(\''+ds+'\')">'+day+(dots?'<div class="cal-dots">'+dots+"</div>":"")+"</a>";
-    else if(has)h+='<a class="cal-day" href="javascript:void(0)" onclick="goToDate(\''+ds+'\')">'+day+(dots?'<div class="cal-dots">'+dots+"</div>":"")+"</a>";
-    else h+='<div class="cal-day empty">'+day+"</div>";
+    if(isT) h += '<a class="cal-day today" href="javascript:void(0)" onclick="goToDate\('+inf.idx+')">'+day+(dots?'<div class="cal-dots">'+dots+'</div>':'')+'</a>';
+    else if(has) h += '<a class="cal-day" href="javascript:void(0)" onclick="goToDate\('+inf.idx+')">'+day+(dots?'<div class="cal-dots">'+dots+'</div>':'')+'</a>';
+    else h += '<div class="cal-day empty">'+day+'</div>';
   }
-  h+="</div></div>";
-  document.getElementById("calWrap").innerHTML=h;
+  h += '</div></div>';
+  document.getElementById("calWrap").innerHTML = h;
 }
 
 function navMo(d){const p=curMo.split("/");let y=+p[0],m=+p[1]+d;if(m>12){y++;m=1}else if(m<1){y--;m=12};curMo=y+"/"+m;cal();}
-async function goToDate(ds){const idx=INDEX.findIndex(r=>r.date===ds);if(idx>=0){curIdx=idx;await loadData(ds);cal();window.scrollTo({top:0,behavior:"smooth"});}}
+function go(i){curIdx=i;render();cal();window.scrollTo({top:0,behavior:"smooth"});}
 
 function render(){
-  const r=REPORTS[0];if(!r)return;
-  const anom=r.anomalies,sc=anom.medium.filter(a=>a.rule==="seller_change");
-  const rm=anom.medium.filter(a=>a.rule!=="seller_change");
-  const sf=curSev;
-  const sH=(sf==="all"||sf==="high")?[...anom.high].sort(srt):[];
-  const sM=(sf==="all"||sf==="medium")?[...rm].sort(srt):[];
-  const sI=(sf==="all"||sf==="info")?[...anom.info].sort(srt):[];
-  const sS=(sf==="all"||sf==="medium"||sf==="seller")?sc:[];
-  let gp=r.products||[];
-  if(sf!=="all"){const ids=new Set();anom.all.forEach(a=>{if(sf==="high"&&a.level==="high")ids.add(a.itemId);if(sf==="medium"&&a.level==="medium")ids.add(a.itemId);if(sf==="info"&&a.level==="info")ids.add(a.itemId);if(sf==="seller"&&a.rule==="seller_change")ids.add(a.itemId)});gp=gp.filter(p=>ids.has(p.itemId)||(sf==="medium"&&sc.some(x=>x.itemId===p.itemId)));}
-
-  const gp1P=gp.filter(p=>p.channel==="1P"),gpWFS=gp.filter(p=>p.channel==="WFS"),gp3P=gp.filter(p=>p.channel==="3P");
-  const s1P=gp1P.reduce((s,p)=>s+(p.sales||0),0),sWFS=gpWFS.reduce((s,p)=>s+(p.sales||0),0),s3P=gp3P.reduce((s,p)=>s+(p.sales||0),0),totalS=s1P+sWFS+s3P;
-
-  let h='<div class="kpi-row">';
-  h+='<div class="kpi"><div class="kv">'+gp.length+'</div><div class="kl">跟踪 SKU</div></div>';
-  h+='<div class="kpi"><div class="kv">'+totalS+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">总日销</div></div>';
-  h+='<div class="kpi"><div class="kv">'+s1P+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">🏪 1P Walmart</div></div>';
-  h+='<div class="kpi g"><div class="kv">'+sWFS+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">✅ WFS 可信</div></div>';
-  h+='<div class="kpi o"><div class="kv">'+s3P+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">⚠️ 3P 存疑</div></div>';
-  h+='</div>';
-
-  // Anomaly cards
-  let anomH='';
-  const totalAnom=sH.length+sM.length+sI.length;
-  if(totalAnom===0&&sS.length===0){anomH+='<div class="empty-state"><div style="font-size:40px">✅</div><p>该条件下无异常</p></div>';}
-  else{
-    anomH+='<div style="text-align:right;margin-bottom:4px;font-size:11px"><a class="pl" href="javascript:void(0)" onclick="collapseAll()">折叠全部</a> · <a class="pl" href="javascript:void(0)" onclick="expandAll()">展开全部</a> · <a class="pl" href="#galTop" onclick="document.getElementById(\'galTop\').scrollIntoView({behavior:\'smooth\'})">↓ 跳至产品</a></div>';
-    const secId=prefix=>"sec_"+prefix+"_"+curIdx;
-    if(sH.length>0){const sid=secId("h");anomH+='<div class="section"><div class="section-title" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">🔴 高风险 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sH.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sH.map(card).join("")+'</div></div>';}
-    if(sM.length>0){const sid=secId("m");anomH+='<div class="section"><div class="section-title" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">🟡 需关注 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sM.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sM.map(card).join("")+'</div></div>';}
-    if(sI.length>0){const sid=secId("i");anomH+='<div class="section"><div class="section-title" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">🔵 信息参考 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sI.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sI.map(card).join("")+'</div></div>';}
-    if(sS.length>0){const sid=secId("s");anomH+='<div class="section"><div class="section-title" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">📋 渠道/卖家变更 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sS.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sellers(sS,gp)+'</div></div>';}
+  const RR = getFilteredReports();
+  const r = RR[curIdx];
+  if(!r){document.getElementById("content").innerHTML='<div class="empty-state"><p>无数据</p></div>';return;}
+  const anom = r.anomalies, sc = anom.medium.filter(a => a.rule==="seller_change");
+  const rm = anom.medium.filter(a => a.rule!=="seller_change");
+  const sf = curSev;
+  const sH = (sf==="all"||sf==="high") ? [...anom.high].sort(srt) : [];
+  const sM = (sf==="all"||sf==="medium") ? [...rm].sort(srt) : [];
+  const sI = (sf==="all"||sf==="info") ? [...anom.info].sort(srt) : [];
+  const sS = (sf==="all"||sf==="medium"||sf==="seller") ? sc : [];
+  let gp = r.products||[];
+  if(sf!=="all"){
+    const ids = new Set();
+    anom.all.forEach(a => {
+      if(sf==="high"&&a.level==="high") ids.add(a.itemId);
+      if(sf==="medium"&&a.level==="medium") ids.add(a.itemId);
+      if(sf==="info"&&a.level==="info") ids.add(a.itemId);
+      if(sf==="seller"&&a.rule==="seller_change") ids.add(a.itemId);
+    });
+    gp = gp.filter(p => ids.has(p.itemId)||(sf==="medium"&&sc.some(x=>x.itemId===p.itemId)));
   }
-  if(sf!=="all")h+=anomH;
 
-  // Category section (simplified for cloud version)
-  const cats={};
-  gp.forEach(p=>{const n=p.productName||"";let t="其他";if(n.match(/Stand(ing)?s*(ups*)?Desk/i)||n.match(/Height\s*Adjustable/i)||n.match(/Electric\s*Desk/i))t="升降桌";else if(n.match(/L\s*Shaped|Corner\s*Desk/i))t="L型桌";else if(n.match(/Computer\s*Desk|Writing\s*Desk/i))t="电脑桌";else if(n.match(/Desk/i))t="书桌";if(!cats[t])cats[t]={name:t,skus:0,totalSales:0,sales1P:0,salesWFS:0,sales3P:0,anomalies:0,priceSum:0,pc:0};cats[t].skus++;cats[t].totalSales+=p.sales||0;if(p.channel==="1P")cats[t].sales1P+=p.sales||0;else if(p.channel==="WFS")cats[t].salesWFS+=p.sales||0;else cats[t].sales3P+=p.sales||0;if(p.hasAnomaly)cats[t].anomalies++;if(p.price){cats[t].priceSum+=p.price;cats[t].pc++;}});
-  const ca=Object.values(cats).filter(c=>c.name==="升降桌"||c.name==="电脑桌"||c.name==="L型桌");
-  ca.forEach(c=>{if(c.pc>0)c.avgPrice=+(c.priceSum/c.pc).toFixed(2)});ca.sort((a,b)=>b.totalSales-a.totalSales);
-  if(ca.length>0){h+='<div class="insight-panel"><h3>🏷 品类维度</h3><div class="cat-row">';ca.forEach(c=>{h+='<div class="cat-card"><div class="cn">'+esc(c.name)+'</div><div class="cm2"><div class="cmm">SKU <b>'+c.skus+'</b></div><div class="cmm">日销 <b>'+c.totalSales+'</b></div><div class="cmm">🏪1P <b>'+c.sales1P+'</b></div><div class="cmm">✅WFS <b>'+c.salesWFS+'</b></div><div class="cmm">⚠️3P <b>'+c.sales3P+'</b></div><div class="cmm">均价 <b>$'+c.avgPrice+'</b></div></div></div>';});h+='</div></div>';}
+  const gp1P = gp.filter(p=>p.channel==="1P"), gpWFS = gp.filter(p=>p.channel==="WFS"), gp3P = gp.filter(p=>p.channel==="3P");
+  const s1P = gp1P.reduce((s,p)=>s+(p.sales||0),0);
+  const sWFS = gpWFS.reduce((s,p)=>s+(p.sales||0),0);
+  const s3P = gp3P.reduce((s,p)=>s+(p.sales||0),0);
+  const totalS = s1P+sWFS+s3P;
 
-  // Strategy section
-  const prodMap={};gp.forEach(p=>{prodMap[p.itemId]=p});
-  const link=a=>'<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+a.itemId+'\')">'+esc(a.shortName||a.itemId)+'</a>';
-  const stg=[];
-  const pdbAll=anom.all.filter(a=>a.rule==="price_drop_boost"||a.rule==="price_drop_surge");
-  const pdbWFS=pdbAll.filter(a=>a.channel==="WFS");
-  const sgWFS=anom.all.filter(a=>(a.rule==="sales_surge_flat_price"||a.rule==="sales_surge")&&a.channel==="WFS");
-  const stoWFS=anom.all.filter(a=>a.rule==="sales_collapse"&&a.channel==="WFS"&&a.metrics&&a.metrics.invNote);
-  const to1P=anom.all.filter(a=>a.rule==="seller_change"&&a.metrics&&a.metrics.changeType==="-> 1P");
+  // KPI row
+  let h = '<div class="kpi-row">';
+  h += '<div class="kpi"><div class="kv">'+gp.length+'</div><div class="kl">跟踪 SKU</div></div>';
+  h += '<div class="kpi"><div class="kv">'+totalS+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">总日销</div></div>';
+  h += '<div class="kpi"><div class="kv">'+s1P+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">🏪 1P Walmart</div></div>';
+  h += '<div class="kpi g"><div class="kv">'+sWFS+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">✅ WFS 可信</div></div>';
+  h += '<div class="kpi o"><div class="kv">'+s3P+'<span style="font-size:12px;opacity:.5"> 单</span></div><div class="kl">⚠️ 3P 存疑</div></div>';
+  h += '</div>';
 
-  const stag=(s,d,a,items)=>{let dd=d;if(items&&items.length>0){dd+=' <a class="pl" href="javascript:void(0)" onclick="showStgProducts(['+items.map(x=>"'"+x.itemId+"'").join(",")+'])">🔍 查看这'+items.length+"款</a>";}stg.push({s:s,d:dd,a:a});};
-  if(pdbWFS.length>=3){const names=pdbWFS.slice(0,3).map(link).join("、");const drops=[...new Set(pdbWFS.map(a=>a.metrics.priceDrop))].join("~");stag("📦 WFS多品降价",names+(pdbWFS.length>3?" 等"+pdbWFS.length+"款":"")+" 同步降价（"+drops+"）","对比同价位产品是否需跟进",pdbWFS);}
-  else if(pdbWFS.length===1){stag("💰 WFS单品降价",link(pdbWFS[0])+" 降"+pdbWFS[0].metrics.priceDrop+",日销"+fmtUnit(pdbWFS[0].metrics.todaySales),"对方持续降价超3天则关注份额",pdbWFS);}
-  if(sgWFS.length>=2){const names=sgWFS.slice(0,3).map(link).join("、");stag("📢 WFS销量暴增",names+(sgWFS.length>3?" 等"+sgWFS.length+"款":"")+" 价格未变但销量暴涨","检查搜索排名和广告位",sgWFS);}
-  if(stoWFS.length>0){const critical=stoWFS.filter(a=>a.metrics.invNote.match(/断货|不足1天|约0天/));const warning=stoWFS.filter(a=>!critical.includes(a));if(critical.length>0){const names=critical.slice(0,3).map(link).join("、");stag("🚨 WFS即将断货",names+(critical.length>3?" 等"+critical.length+"款":"")+" 库存不足！","⚠️ 补位窗口！准备替代品上架",critical);}if(warning.length>0){const names=warning.slice(0,3).map(link).join("、");stag("📦 WFS库存偏低",names+(warning.length>3?" 等"+warning.length+"款":"")+" 库存偏低","持续关注，降至0即机会",warning);}}
-  if(to1P.length>0){const names=to1P.slice(0,3).map(link).join("、");stag("🏪 产品切为1P",names+(to1P.length>3?" 等"+to1P.length+"款":"")+" 变为Walmart自营","1P后库存不可见",to1P);}
-  if(stg.length===0)stg.push({s:"✅ 今日平稳",d:"未检测到重点关注的市场异动",a:"例行跟踪即可"});
-  else{const wfsTrust=gpWFS.reduce((s,p)=>s+(p.sales||0),0),total=gp.reduce((s,p)=>s+(p.sales||0),0),trustPct=total>0?(wfsTrust/total*100).toFixed(0):0;stg.unshift({s:"📊 今日概览",d:"WFS可信占比"+trustPct+"%，共"+anom.all.length+"条异常"+(anom.high.length>0?"（高风险"+anom.high.length+"条）":"")+"。"});}
-  h+='<div class="insight-panel"><h3>🧠 策略判断</h3>';stg.forEach(s=>{h+='<div class="stg-item"><div class="ss">'+esc(s.s||"")+'</div><div class="sd">'+s.d+'</div>';if(s.a)h+='<div class="sa">'+esc(s.a)+'</div>';h+='</div>';});h+='</div>';
+  // Anomaly cards (collapsible sections)
+  const secId = (prefix) => 'sec_'+prefix+'_'+curIdx;
+  let anomH = '';
+  const totalAnom = sH.length+sM.length+sI.length;
+  if(totalAnom===0 && sS.length===0){
+    anomH += '<div class="empty-state"><div style="font-size:40px">✅</div><p>该条件下无异常</p></div>';
+  } else {
+    anomH += '<div style="text-align:right;margin-bottom:4px;font-size:11px"><a class="pl" href="javascript:void(0)" onclick="collapseAll()">折叠全部</a> · <a class="pl" href="javascript:void(0)" onclick="expandAll()">展开全部</a> · <a class="pl" href="#galTop" onclick="document.getElementById(\'galTop\').scrollIntoView({behavior:\'smooth\'})">↓ 跳至产品</a></div>';
+    if(sH.length>0){const sid=secId('h');anomH+='<div class="section"><div class="section-title" style="cursor:pointer" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">🔴 高风险 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sH.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sH.map(card).join('')+'</div></div>';}
+    if(sM.length>0){const sid=secId('m');anomH+='<div class="section"><div class="section-title" style="cursor:pointer" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">🟡 需关注 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sM.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sM.map(card).join('')+'</div></div>';}
+    if(sI.length>0){const sid=secId('i');anomH+='<div class="section"><div class="section-title" style="cursor:pointer" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">🔵 信息参考 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sI.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sI.map(card).join('')+'</div></div>';}
+    if(sS.length>0){const sid=secId('s');anomH+='<div class="section"><div class="section-title" style="cursor:pointer" onclick="document.getElementById(\''+sid+'\').classList.toggle(\'hide\');this.querySelector(\'.st-arrow\').classList.toggle(\'open\')">📋 渠道/卖家变更 <span style="background:#e8e8e8;border-radius:20px;padding:1px 8px;font-size:11px">'+sS.length+'</span> <span class="st-arrow" style="font-size:10px">▼</span></div><div id="'+sid+'" class="sec-body">'+sellers(sS,gp)+'</div></div>';}
+  }
+
+  // When filter active, show anomalies first (before category/strategy)
+  if(sf!=="all") h += anomH;
+
+  // Category
+  const cats = {};
+  gp.forEach(p => {
+    const n = p.productName||"";
+    let t = "其他";
+    if(n.match(/Stand(ing)?s*(ups*)?Desk/i)||n.match(/Height\s*Adjustable/i)||n.match(/Electric\s*Desk/i)) t="升降桌";
+    else if(n.match(/L\s*Shaped|Corner\s*Desk/i)) t="L型桌";
+    else if(n.match(/Computer\s*Desk|Writing\s*Desk/i)) t="电脑桌";
+    else if(n.match(/Desk/i)) t="书桌";
+    if(!cats[t]) cats[t]={name:t,skus:0,totalSales:0,sales1P:0,salesWFS:0,sales3P:0,anomalies:0,priceSum:0,pc:0};
+    cats[t].skus++; cats[t].totalSales += p.sales||0;
+    if(p.channel==="1P") cats[t].sales1P += p.sales||0;
+    else if(p.channel==="WFS") cats[t].salesWFS += p.sales||0;
+    else cats[t].sales3P += p.sales||0;
+    if(p.hasAnomaly) cats[t].anomalies++;
+    if(p.price){cats[t].priceSum+=p.price;cats[t].pc++;}
+  });
+  const ca = Object.values(cats).filter(c => c.name==="升降桌"||c.name==="电脑桌"||c.name==="L型桌");
+  ca.forEach(c => {if(c.pc>0) c.avgPrice = +(c.priceSum/c.pc).toFixed(2);});
+  ca.sort((a,b) => b.totalSales - a.totalSales);
+  if(ca.length>0){
+    // Compute 7-day price comparison for category cards
+    const catName2 = (n) => {
+      if(n.match(/Stand(ing)?s*(ups*)?Desk/i)||n.match(/Height\s*Adjustable/i)||n.match(/Electric\s*Desk/i)) return '升降桌';
+      if(n.match(/L\s*Shaped|Corner\s*Desk/i)) return 'L型桌';
+      if(n.match(/Computer\s*Desk|Writing\s*Desk/i)) return '电脑桌';
+      if(n.match(/Desk/i)) return '书桌';
+      return '其他';
+    };
+    const refDay7 = RR[Math.max(0,curIdx-7)];
+    const refCatPrices = {};
+    if(refDay7 && refDay7!==r){(refDay7.products||[]).forEach(p=>{if(p.price){const cn=catName2(p.productName||'');if(!refCatPrices[cn])refCatPrices[cn]={sum:0,n:0};refCatPrices[cn].sum+=p.price;refCatPrices[cn].n++;}});}
+    h += '<div class="insight-panel"><h3>🏷 品类维度</h3><div class="cat-row">';
+    ca.forEach(c => {
+      h += '<div class="cat-card"><div class="cn">'+esc(c.name)+'</div><div class="cm2">';
+      h += '<div class="cmm">SKU <b>'+c.skus+'</b></div><div class="cmm">日销 <b>'+c.totalSales+'</b></div>';
+      h += '<div class="cmm">🏪1P <b>'+c.sales1P+'</b></div><div class="cmm">✅WFS <b>'+c.salesWFS+'</b></div><div class="cmm">⚠️3P <b>'+c.sales3P+'</b></div>';
+      h += '<div class="cmm">均价 <b>$'+c.avgPrice+'</b></div>';
+      // 7-day price trend
+      const refCat = refCatPrices[c.name];
+      if(refCat && refCat.n>5){
+        const refAvg = Math.round(refCat.sum/refCat.n);
+        const chg = ((c.avgPrice-refAvg)/refAvg*100).toFixed(1);
+        const arrow = chg>2?'↑':chg<-2?'↓':'';
+        const color = Math.abs(chg)>2 ? (chg>0?'#e74c3c':'#27ae60') : '#888';
+        h += '<div class="cmm" style="color:'+color+'">7日 $'+refAvg+'→$'+c.avgPrice+(arrow?' <b>'+arrow+Math.abs(chg)+'%</b>':'')+'</div>';
+      }
+      h += '</div></div>';
+    });
+    h += '</div></div>';
+  }
+
+  // Strategy — computed from anomalies
+  const prodMap = {}; gp.forEach(p=>{prodMap[p.itemId]=p;});
+  const link = (a) => '<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+a.itemId+'\')">'+esc(a.shortName||a.itemId)+'</a>';
+  const stg = [];
+  const pdbAll = anom.all.filter(a=>a.rule==="price_drop_boost"||a.rule==="price_drop_surge");
+  const pdbWFS = pdbAll.filter(a=>a.channel==="WFS");
+  const pdb1P3P = pdbAll.filter(a=>a.channel!=="WFS");
+  const sgWFS = anom.all.filter(a=>(a.rule==="sales_surge_flat_price"||a.rule==="sales_surge")&&a.channel==="WFS");
+  const stoWFS = anom.all.filter(a=>a.rule==="sales_collapse"&&a.channel==="WFS"&&a.metrics&&a.metrics.invNote);
+  const to1P = anom.all.filter(a=>a.rule==="seller_change"&&a.metrics&&a.metrics.changeType==="-> 1P");
+
+  // Helper: build strategy item with optional "view all" filter
+  const stag = (s,d,a,items) => {
+    let dd = d;
+    if(items&&items.length>0){
+      dd += ' <a class="pl" href="javascript:void(0)" onclick="showStgProducts(['+items.map(x=>"'"+x.itemId+"'").join(',')+'])" style="font-size:11px;border:1px solid #1a237e;padding:1px 6px;border-radius:10px;margin-left:4px">🔍 查看这'+items.length+'款</a>';
+    }
+    stg.push({s:s,d:dd,a:a});
+  };
+
+  // 1. WFS降价
+  if(pdbWFS.length>=3){
+    const names=pdbWFS.slice(0,3).map(link).join('、');
+    const drops=[...new Set(pdbWFS.map(a=>a.metrics.priceDrop))].join('~');
+    stag('📦 WFS多品降价',names+(pdbWFS.length>3?' 等'+pdbWFS.length+'款':'')+' 同步降价（'+drops+'），大概率是竞对集中促销。','对比同价位产品是否需跟进；持续超7天可能是清仓，可准备承接需求。',pdbWFS);
+  }else if(pdbWFS.length===1){
+    stag('💰 WFS单品降价',link(pdbWFS[0])+' 降'+pdbWFS[0].metrics.priceDrop+'，日销'+fmtUnit(pdbWFS[0].metrics.todaySales)+'。','对方持续降价超3天则关注你是否被侵蚀份额。',pdbWFS);
+  }
+
+  // 2. 1P/3P降价
+  if(pdb1P3P.length>=3){
+    const brands=[...new Set(pdb1P3P.map(a=>(prodMap[a.itemId]&&prodMap[a.itemId].brand)||'?'))].join('、');
+    stag('📉 非WFS渠道降价',brands+' 等'+pdb1P3P.length+'款降价，但销量不可信（1P/3P渠道）。','价格变动真实，降幅>15%建议手动抽查竞对链接。',pdb1P3P);
+  }
+
+  // 3. WFS销量暴增
+  if(sgWFS.length>=2){
+    const names=sgWFS.slice(0,3).map(link).join('、');
+    stag('📢 WFS销量暴增',names+(sgWFS.length>3?' 等'+sgWFS.length+'款':'')+' 价格未变但销量暴涨，疑似投流或活动引流。','检查这些品搜索排名和广告位，决定是否加广告预算防守。',sgWFS);
+  }
+
+  // 4. WFS库存预警
+  if(stoWFS.length>0){
+    const critical=stoWFS.filter(a=>a.metrics.invNote.match(/断货|不足1天|约0天/));
+    const warning=stoWFS.filter(a=>!critical.includes(a));
+    if(critical.length>0){
+      const names=critical.slice(0,3).map(link).join('、');
+      stag('🚨 WFS即将断货',names+(critical.length>3?' 等'+critical.length+'款':'')+' 库存不足，即将下架！','⚠️ 补位窗口！准备替代品上架或加大同款推广。',critical);
+    }
+    if(warning.length>0){
+      const names=warning.slice(0,3).map(link).join('、');
+      stag('📦 WFS库存偏低',names+(warning.length>3?' 等'+warning.length+'款':'')+' 库存偏低，卖家可能控销。','持续关注库存变化，降至0即机会。',warning);
+    }
+  }
+
+  // 5. 切1P
+  if(to1P.length>0){
+    const names=to1P.slice(0,3).map(link).join('、');
+    stag('🏪 产品切为1P',names+(to1P.length>3?' 等'+to1P.length+'款':'')+' 变为Walmart自营。','1P后库存不可见，销量可信度降。关注是否长期留在1P（可能清仓退3P）。',to1P);
+  }
+
+  // 6. 连续降价（跨日追踪）
+  const prevDay = RR[curIdx-1];
+  if(prevDay){
+    const prevDrops = new Set((prevDay.anomalies.all||[]).filter(a=>a.rule==="price_drop_boost"||a.rule==="price_drop_surge").map(a=>a.itemId));
+    const todayDrops = pdbAll.filter(a=>prevDrops.has(a.itemId));
+    if(todayDrops.length>=2){
+      const names=todayDrops.slice(0,5).map(link).join('、');
+      stag('🔥 连续降价',names+(todayDrops.length>5?' 等'+todayDrops.length+'款':'')+' 昨天也在降，非偶然促销。','若持续超过5天大概率清仓，准备承接需求。',todayDrops);
+    }
+  }
+
+  // 7. 新品入局
+  const latestIdx = RR.length-1;
+  const recentIds = new Set(), olderIds = new Set();
+  for(let di2=Math.max(0,latestIdx-3);di2<=latestIdx;di2++){(RR[di2].products||[]).forEach(p=>recentIds.add(p.itemId));}
+  for(let di2=0;di2<Math.max(0,latestIdx-3);di2++){(RR[di2].products||[]).forEach(p=>olderIds.add(p.itemId));}
+  const trulyNew = [...recentIds].filter(id=>!olderIds.has(id)&&prodMap[id]);
+  if(trulyNew.length>=2){
+    const names=trulyNew.slice(0,5).map(id=>{const p=prodMap[id];return p?'<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+id+'\')">'+esc(p.shortName||id)+'</a>('+esc(p.brand||'')+')':id}).join('、');
+    stg.push({s:'🆕 新品入局',d:'近4天新出现'+trulyNew.length+'款：'+names,a:'新对手入局，关注其定价和起步销量。'});
+  }
 
   // Summary
-  let sumH="";
-  if(anom.high.length>0){sumH+='<div class="sr sh"><span class="sb">🔴 高风险异常</span>'+anom.high.length+"条";sumH+='<div class="si">'+anom.high.map(a=>link(a)).join("、")+"</div></div>";}
-  if(sc.length>0){const to1Psc=sc.filter(a=>(a.metrics&&a.metrics.changeType||"").indexOf("-> 1P")>=0);const between=sc.filter(a=>to1Psc.indexOf(a)<0);sumH+='<div class="sr sm"><span class="sb">🟡 渠道/卖家变更</span>';if(to1Psc.length>0)sumH+='<div class="si">→1P ×'+to1Psc.length+"："+to1Psc.map(a=>link(a)).join("、")+"</div>";if(between.length>0)sumH+='<div class="si">其他 ×'+between.length+"："+between.map(a=>link(a)).join("、")+"</div>";sumH+="</div>";}
-  if(rm.length>0)sumH+='<div class="sr sm"><span class="sb">🟡 需关注</span>'+rm.length+"条</div>";
-  const nonWFS=s1P+s3P,pctNonWFS=totalS>0?nonWFS/totalS:0;
-  if(pctNonWFS>0.6&&nonWFS>50){sumH+='<div class="sr sw"><span class="sb">⚠️ 非WFS销量存疑</span>'+(pctNonWFS*100).toFixed(0)+"%（1P+3P="+nonWFS+"/"+totalS+"单，可信WFS="+sWFS+"单）</div>";}
-  if(!sumH)sumH='<div class="sr"><span class="sb">✅</span> '+curBrand+" 今日表现平稳</div>";
-  document.getElementById("summary").innerHTML=sumH;
+  if(stg.length===0){
+    stg.push({s:'✅ 今日平稳',d:'未检测到需要重点关注的市场异动。',a:'例行跟踪即可。'});
+  }else{
+    const wfsTrust = gpWFS.reduce((s,p)=>s+(p.sales||0),0);
+    const total = gp.reduce((s,p)=>s+(p.sales||0),0);
+    const trustPct = total>0 ? (wfsTrust/total*100).toFixed(0) : 0;
+    stg.unshift({s:'📊 今日概览',d:'WFS可信销量占比'+trustPct+'%（'+wfsTrust+'/'+total+'单），共'+anom.all.length+'条异常'+(anom.high.length>0?'（高风险'+anom.high.length+'条）':'')+'.'});
+  }
 
-  if(sf==="all")h+=anomH;
-  h+='<div id="galTop"></div>'+gallery(gp);
-  document.getElementById("content").innerHTML=h;
-  document.getElementById("svAll").textContent=anom.all.length;
-  document.getElementById("svH").textContent=anom.high.length;
-  document.getElementById("svM").textContent=rm.length;
-  document.getElementById("svI").textContent=anom.info.length;
-  document.getElementById("svS").textContent=sc.length;
+  h += '<div class="insight-panel"><h3>🧠 策略判断</h3>';
+  stg.forEach(s => {
+    h += '<div class="stg-item"><div class="ss">'+esc(s.s||"")+'</div><div class="sd">'+s.d+'</div>';
+    if(s.a) h += '<div class="sa">'+esc(s.a)+'</div>';
+    h += '</div>';
+  });
+  h += '</div>';
+
+  // ====== SUMMARY ======
+  let sumH = "";
+  if(r._globalAlerts && r._globalAlerts.length>0){
+    r._globalAlerts.filter(a => a.signal!=="High risk"&&a.signal!=="Non-WFS dominant").forEach(a => {sumH += '<div class="alert-global ag-'+a.level+'"><b>'+esc(a.signal)+'</b> '+esc(a.detail)+'</div>';});
+  }
+  if(anom.high.length>0){
+    sumH += '<div class="sr sh"><span class="sb">🔴 高风险异常</span>'+anom.high.length+'条';
+    sumH += '<div class="si">'+anom.high.map(a => '<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+a.itemId+'\')">'+esc(a.shortName||a.itemId)+'</a>').join('、')+'</div></div>';
+  }
+  if(sc.length>0){
+    const to1P = sc.filter(a => (a.metrics&&a.metrics.newChannel)==="1P"||(a.metrics&&a.metrics.changeType||"").indexOf("-> 1P")>=0);
+    const chg = sc.filter(a => to1P.indexOf(a)<0);
+    sumH += '<div class="sr sm"><span class="sb">🟡 渠道/卖家变更</span>';
+    if(to1P.length>0) sumH += '<div class="si">→1P ×'+to1P.length+'：'+to1P.map(a => '<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+a.itemId+'\')">'+esc(a.shortName||a.itemId)+'</a>').join('、')+'</div>';
+    if(chg.length>0) sumH += '<div class="si">其他变更 ×'+chg.length+'：'+chg.map(a => {const ct=esc(a.metrics&&a.metrics.changeType||"");return'<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+a.itemId+'\')">'+esc(a.shortName||a.itemId)+'</a>（'+ct+'）'}).join('、')+'</div>';
+    sumH += '</div>';
+  }
+  if(rm.length>0) sumH += '<div class="sr sm"><span class="sb">🟡 需关注</span>'+rm.length+'条</div>';
+  if(anom.info.length>0) sumH += '<div class="sr si2"><span class="sb">🔵 信息参考</span>'+anom.info.length+'条</div>';
+
+  // Non-WFS verification (1P + 3P are both untrusted)
+  const nonWFS = s1P+s3P, pctNonWFS = totalS>0 ? nonWFS/totalS : 0;
+  if(pctNonWFS>0.6 && nonWFS>50){
+    const untrusted = gp.filter(p=>p.channel!=="WFS");
+    const pcU = untrusted.filter(p => p.prevPrice&&p.price&&Math.abs((p.price-p.prevPrice)/p.prevPrice*100)>2&&(p.sales||0)>0).sort((a,b)=>(b.sales||0)-(a.sales||0)).slice(0,5);
+    const topU = [...untrusted].sort((a,b)=>(b.sales||0)-(a.sales||0)).slice(0,3);
+    let v = "";
+    if(pcU.length>0) v += " · 价动："+pcU.map(p => {const pct=((p.price-p.prevPrice)/p.prevPrice*100).toFixed(0)+"%";return'<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+p.itemId+'\')">'+esc(p.shortName||"")+'</a> '+esc(pct)}).join('、');
+    v += " · 来源："+topU.map(p => '<a class="pl" href="javascript:void(0)" onclick="highlightProduct(\''+p.itemId+'\')">'+esc(p.shortName||"")+'</a> '+p.sales+'单').join('、');
+    sumH += '<div class="sr sw"><span class="sb">⚠️ 非WFS销量存疑</span>'+(pctNonWFS*100).toFixed(0)+'%（1P+3P='+nonWFS+'/'+totalS+'单，可信WFS='+sWFS+'单）'+v+'</div>';
+  }
+
+  // 7-day trend
+  const trendStart = Math.max(0, curIdx-6);
+  const td = [];
+  for(let t=curIdx; t>=trendStart; t--){
+    const rd = RR[t];
+    td.push({date:rd.date,wfs:rd.products.filter(p=>p.channel==="WFS").reduce((s,p)=>s+(p.sales||0),0),tp:rd.products.filter(p=>p.channel==="1P").reduce((s,p)=>s+(p.sales||0),0),pd:(rd.anomalies.all||[]).filter(a=>a.rule==="price_drop_surge"&&a.channel!=="3P").length});
+  }
+  let tt = "";
+  const r3 = td.slice(-3);
+  if(r3.length>=3){
+    const wv = r3.map(d=>d.wfs), wd = wv[2]-wv[0];
+    if(wd<-20) tt += '📉 WFS可信销量近3天持续下降('+wv.join('→')+')，3P渠道在收缩。';
+    else if(wd>20) tt += '📈 WFS可信销量近3天上升('+wv.join('→')+')，3P渠道增长。';
+    else tt += '➡️ WFS可信销量近3天稳定('+wv.join('→')+')。';
+  }
+  const dc = td.filter(d=>d.pd>0).length;
+  if(dc>=2) tt += ' 近7天有'+dc+'天降价冲量，竞争激烈。';
+  const to1Psc = sc.filter(a => (a.metrics&&a.metrics.newChannel)==="1P");
+  if(to1Psc.length>0 && r3.length>=3 && (r3[2].wfs-r3[0].wfs)<-20){
+    const to1Names=to1Psc.map(a=>esc(a.shortName||a.itemId||"")).filter(n=>n);if(to1Names.length)tt+=' 📦 '+to1Names.join('、')+' →1P';
+  }
+  if(tt) sumH += '<div class="sr" style="background:#f5f8fa;border-left:4px solid #3498db"><span class="sb">📈 7日趋势</span>'+tt+'</div>';
+  if(!sumH) sumH = '<div class="sr"><span class="sb">✅</span> '+curBrand+' 今日表现平稳，未检测到异常。</div>';
+  document.getElementById("summary").innerHTML = sumH;
+
+  // When showing all, put anomalies after summary
+  if(sf==="all") h += anomH;
+
+  h += '<div id="galTop"></div>'+gallery(gp);
+  document.getElementById("content").innerHTML = h;
+  document.getElementById("svAll").textContent = anom.all.length;
+  document.getElementById("svH").textContent = anom.high.length;
+  document.getElementById("svM").textContent = rm.length;
+  document.getElementById("svI").textContent = anom.info.length;
+  document.getElementById("svS").textContent = sc.length;
 }
 
 function card(a){
-  const c=LCOL[a.level],bg=LBG[a.level],bd=LBD[a.level];
-  const m=a.metrics||{},img=a.image||"",url=a.link||"";
-  const name=esc(a.productName||""),sn=esc(a.shortName||a.itemId||"");
-  const title=TITLE_MAP[a.title]||a.title||"";
-  const ch=a.channel||"3P";
-  let streak="";
-  if(a.consecutiveDays>=2)streak+='<span class="card-streak">🔥 连续'+a.consecutiveDays+"天"+title+"</span>";
-  if(ch==="WFS")streak+='<span class="conf-high">WFS可信</span>';
-  else if(ch==="1P")streak+='<span class="conf-low">1P销量存疑</span>';
-  else streak+='<span class="conf-low">3P销量存疑</span>';
-  let mh="";
-  if(m.priceBefore&&m.priceAfter)mh+='<div class="met"><span class="mk">价格</span> <span class="mv">'+esc(m.priceBefore)+" → "+esc(m.priceAfter)+"</span></div>";
-  if(m.priceDrop)mh+='<div class="met"><span class="mk">降价</span> <span class="mdn">'+esc(m.priceDrop)+"</span></div>";
-  if(m.todaySales)mh+='<div class="met"><span class="mk">日销</span> <span class="mv">'+fmtUnit(m.todaySales)+"</span></div>";
-  if(m.avgSales)mh+='<div class="met"><span class="mk">日均</span> <span>'+fmtUnit(m.avgSales)+"</span></div>";
-  if(m.surge)mh+='<div class="met"><span class="mk">涨幅</span> <span class="mup">↑'+esc(m.surge)+"</span></div>";
-  if(m.drop)mh+='<div class="met"><span class="mk">跌幅</span> <span class="mdn">↓'+esc(m.drop)+"</span></div>";
-  if(m.changeType)mh+='<div class="met"><span class="mk">变更</span> <span class="mv">'+esc(m.changeType)+"</span></div>";
-  if(m.note&&m.note==="stock_trust_down")mh+='<div class="met"><span class="mwarn">⚠️ 库存不可见</span></div>';
-  if(ch!=="WFS")mh+='<div class="met"><span class="mwarn">⚠️ '+(ch==="1P"?"1P":"3P")+"销量存疑</span></div>";
-  if(m.invNote)mh+='<div class="met"><span class="mwarn">📦 '+esc(m.invNote)+"</span></div>";
-  let trendH="";
+  const c = LCOL[a.level], bg = LBG[a.level], bd = LBD[a.level];
+  const m = a.metrics||{}, img = a.image||"", url = a.link||"";
+  const name = esc(a.productName||""), sn = esc(a.shortName||a.itemId||"");
+  const title = TITLE_MAP[a.title]||a.title||"";
+  const ch = a.channel||"3P";
+  let streak = "";
+  if(a.consecutiveDays>=2) streak += '<span class="card-streak">🔥 连续'+a.consecutiveDays+'天'+title+'</span>';
+  if(ch==="WFS") streak += '<span class="conf-high">WFS可信</span>';
+  else if(ch==="1P") streak += '<span class="conf-low">1P销量存疑</span>';
+  else streak += '<span class="conf-low">3P销量存疑</span>';
+  let mh = "";
+  if(m.priceBefore&&m.priceAfter) mh += '<div class="met"><span class="mk">价格</span> <span class="mv">'+esc(m.priceBefore)+' → '+esc(m.priceAfter)+'</span></div>';
+  if(m.priceDrop) mh += '<div class="met"><span class="mk">降价</span> <span class="mdn">'+esc(m.priceDrop)+'</span></div>';
+  if(m.todaySales) mh += '<div class="met"><span class="mk">日销</span> <span class="mv">'+fmtUnit(m.todaySales)+'</span></div>';
+  if(m.avgSales) mh += '<div class="met"><span class="mk">日均</span> <span>'+fmtUnit(m.avgSales)+'</span></div>';
+  if(m.surge) mh += '<div class="met"><span class="mk">涨幅</span> <span class="mup">↑'+esc(m.surge)+'</span></div>';
+  if(m.drop) mh += '<div class="met"><span class="mk">跌幅</span> <span class="mdn">↓'+esc(m.drop)+'</span></div>';
+  if(m.invNote) mh += '<div class="met"><span class="mwarn">📦 '+esc(m.invNote)+'</span></div>';
+  if(m.changeType) mh += '<div class="met"><span class="mk">变更</span> <span class="mv">'+esc(m.changeType)+'</span></div>';
+  if(m.note&&m.note==="stock_trust_down") mh += '<div class="met"><span class="mwarn">⚠️ 库存不可见</span></div>';
+  if(ch!=="WFS") mh += '<div class="met"><span class="mwarn">⚠️ '+(ch==="1P"?"1P":"3P")+'销量存疑</span></div>';
+
+  let trendH = "";
   if(a._trend&&a._trend.length>=2){
-    const mx=Math.max(...a._trend.map(d=>d.sales),1);
-    trendH='<div class="mini-trend">';
-    a._trend.forEach((d,i)=>{const isT=i===a._trend.length-1,bh=Math.max(3,(d.sales/mx)*30);let cls="n";if(isT&&d.sales===mx&&d.sales>0)cls="p";if(isT)cls+=" t";trendH+='<div class="mtw"><div class="mtb '+cls+'" style="height:'+bh+'px" title="'+d.date+": "+d.sales+'单"></div><span class="mtv">'+d.sales+'</span><span class="mtd">'+d.date.replace("2026/","")+"</span></div>';});
-    trendH+="</div>";
+    const mx = Math.max(...a._trend.map(d=>d.sales),1);
+    trendH = '<div class="mini-trend">';
+    a._trend.forEach((d,i) => {
+      const isT = i===a._trend.length-1, bh = Math.max(3,(d.sales/mx)*30);
+      let cls = "n"; if(isT&&d.sales===mx&&d.sales>0) cls="p"; if(isT) cls+=" t";
+      trendH += '<div class="mtw"><div class="mtb '+cls+'" style="height:'+bh+'px" title="'+d.date+': '+d.sales+'单"></div><span class="mtv">'+d.sales+'</span><span class="mtd">'+d.date.replace("2026/","")+'</span></div>';
+    });
+    trendH += '</div>';
   }
-  const imgB=img?'<img src="'+esc(img)+'" alt="" style="cursor:pointer;max-width:100%;max-height:100%" onclick="event.preventDefault();event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看历史趋势">':'<div style="font-size:24px;color:#ddd;cursor:pointer" onclick="event.preventDefault();event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看历史趋势">📦</div>';
-  const titleB=url?'<a href="'+esc(url)+'" target="_blank">'+name+"</a>":name;
-  return '<div class="card" style="border-left:4px solid '+bd+";background:"+bg+'"><div class="card-img">'+imgB+'</div><div class="card-info"><div><span class="card-tag" style="background:'+c+'">'+title+"</span>"+streak+'</div><div class="card-sn">'+sn+'</div><div class="card-fn">'+titleB+'</div><div class="metrics">'+mh+"</div>"+trendH+"</div></div>";
+  const imgB = img ? '<img src="'+esc(img)+'" alt="" style="cursor:pointer;max-width:100%;max-height:100%" onclick="event.preventDefault();event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看历史趋势"><div style="display:none;width:100%;height:100%;align-items:center;justify-content:center;font-size:24px;color:#ddd;cursor:pointer" onclick="event.preventDefault();event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看历史趋势">📦</div>' : '<div style="font-size:24px;color:#ddd;cursor:pointer;display:flex;align-items:center;justify-content:center;width:100%;height:100%" onclick="event.preventDefault();event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看历史趋势">📦</div>';
+  const titleB = url ? '<a href="'+esc(url)+'" target="_blank">'+name+'</a>' : name;
+  return '<div class="card" style="border-left:4px solid '+bd+';background:'+bg+'"><div class="card-img">'+imgB+'</div><div class="card-info"><div><span class="card-tag" style="background:'+c+'">'+title+'</span>'+streak+'</div><div class="card-sn">'+sn+'</div><div class="card-fn">'+titleB+'</div><div class="metrics">'+mh+'</div>'+trendH+'</div></div>';
 }
 
-function sellers(items,gp){
-  if(!items||items.length===0)return "";
-  const prodMap={};if(gp)gp.forEach(p=>{prodMap[p.itemId]=p});
-  const chChange=items.filter(a=>a.metrics&&a.metrics.oldChannel&&a.metrics.oldChannel!==a.metrics.newChannel);
-  const slChange=items.filter(a=>!chChange.includes(a));
-  let h='<div class="seller-toggle"><span class="st-arrow">▶</span> '+items.length+" 个产品变更（渠道 "+chChange.length+" / 卖家 "+slChange.length+"）点击展开</div><div class="seller-detail">";
-  const getInvDetail=p=>{if(!p)return"";const inv=p.inventory||0,trend=p._trend||[];const avg7=trend.length>0?trend.reduce((s,d)=>s+(d.sales||0),0)/trend.length:0;if(inv>0&&avg7>0){const days=Math.floor(inv/avg7);let d="库存"+inv+"件，日均"+Math.round(avg7)+"单，约"+(days>0?days:1)+"天";if(days<=7)d+=' <b style="color:#e74c3c">库存偏低！</b>';return d}else if(inv>0)return"库存"+inv+"件";return""};
-  chChange.forEach(a=>{const img=a.image||"",url=a.link||"";const displayName=a.shortName||(a.productName||"").substring(0,40)||a.itemId;const name=esc(displayName);const oldCh=a.metrics.oldChannel,newCh=a.metrics.newChannel;const oIcon=CH_ICON[chKey(oldCh)]||oldCh,nIcon=CH_ICON[chKey(newCh)]||newCh;const prod=prodMap[a.itemId];const sales=prod?(prod.sales||0):0;let analysis="";if(newCh==="1P"){const prevInvDetail=oldCh==="WFS"?getInvDetail(prod):"";analysis=' <span style="color:#e67e22">⚠️ 变为Walmart自营'+(prevInvDetail?"（此前："+prevInvDetail+"）":"")+(sales>10?"，日销"+sales+"单的热品，关注替代品。":"。")+"</span>";}else if(newCh==="WFS"){const invDetail=getInvDetail(prod);analysis=' <span style="color:#27ae60">✅ '+(oldCh==="3P"?"从3P升级为WFS！":"从1P转为WFS！")+(invDetail?"库存可见："+invDetail:"暂无库存数据")+(sales>0?"，日销"+sales+"单。":"。")+"</span>";}else if(newCh==="3P"&&oldCh==="WFS"){const prevInvDetail=getInvDetail(prod);analysis=' <span style="color:#e67e22">⚠️ 降级为3P，库存不再可见'+(prevInvDetail?"（此前："+prevInvDetail+"）":"。")+"</span>";}const imgT=img?'<img class="sd-img" src="'+esc(img)+'" alt="" style="cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">':'<div class="sd-img" style="display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">📦</div>';const nameT=url?'<a href="'+esc(url)+'" target="_blank">'+name+"</a>":name;h+='<div class="sd-item">'+imgT+'<div class="sd-info"><b style="color:#e67e22">渠道变更</b> '+oIcon+"→"+nIcon+"："+nameT+analysis+"</div></div>";});
-  slChange.forEach(a=>{const img=a.image||"",url=a.link||"";const displayName=a.shortName||(a.productName||"").substring(0,40)||a.itemId;const name=esc(displayName);const m=a.metrics||{};const ch=a.channel||"3P";const chLabel=CH_LABEL[chKey(ch)]||ch;const prod=prodMap[a.itemId];const sales=prod?(prod.sales||0):0;const sellerText=esc(m.oldSeller||"?")+" → "+esc(m.newSeller||"?");let analysis="";analysis='<span style="color:#888">【'+chLabel+"】"+sellerText+(ch==="WFS"?"，库存仍可信":"")+(sales>10?"，日销"+sales+"单":"")+"</span>";const imgT=img?'<img class="sd-img" src="'+esc(img)+'" alt="" style="cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">':'<div class="sd-img" style="display:flex;align-items:center;justify-content:center">📦</div>';const nameT=url?'<a href="'+esc(url)+'" target="_blank">'+name+"</a>":name;h+='<div class="sd-item">'+imgT+'<div class="sd-info"><b>卖家变更</b>：'+nameT+" "+analysis+"</div></div>";});
-  h+="</div>";return h;
+function sellers(items, gp){
+  if(!items||items.length===0) return "";
+  const prodMap = {}; if(gp) gp.forEach(p=>{prodMap[p.itemId]=p;});
+  // Group by type
+  const chChange = items.filter(a => a.metrics&&a.metrics.oldChannel && a.metrics.oldChannel!==a.metrics.newChannel);
+  const slChange = items.filter(a => !chChange.includes(a));
+
+  let h = '<div class="seller-toggle"><span class="st-arrow">▶</span> '+items.length+' 个产品变更（渠道变更 '+chChange.length+' / 卖家变更 '+slChange.length+'）点击展开</div><div class="seller-detail">';
+
+  // Channel changes first (more important)
+  chChange.forEach(a => {
+    const img = a.image||"", url = a.link||"";
+    const displayName = a.shortName || (a.productName||"").substring(0,40) || a.itemId;
+    const name = esc(displayName);
+    const oldCh = a.metrics.oldChannel, newCh = a.metrics.newChannel;
+    const oIcon = CH_ICON[chKey(oldCh)]||oldCh, nIcon = CH_ICON[chKey(newCh)]||newCh;
+    const prod = prodMap[a.itemId];
+    const sales = prod ? (prod.sales||0) : 0;
+    const salesText = sales>0 ? '（今日'+sales+'单）' : '';
+    // Inventory helper
+    const getInvDetail = (p) => {
+      if(!p) return '';
+      const inv = p.inventory||0, trend = p._trend||[];
+      const avg7 = trend.length>0 ? trend.reduce((s,d)=>s+(d.sales||0),0)/trend.length : 0;
+      if(inv>0 && avg7>0){
+        const days=Math.floor(inv/avg7);
+        let d = '当前库存'+inv+'件，近7天日均销'+Math.round(avg7)+'单，预计可售'+(days>0?days+'天':'<1天');
+        if(days<=7) d+=' <b style="color:#e74c3c">库存偏低！</b>';
+        else if(days<=30) d+=' 库存正常';
+        else d+=' 库存充足';
+        return d;
+      }else if(inv>0) return '当前库存'+inv+'件';
+      return '';
+    };
+    let analysis = "";
+    if(newCh==="1P"){
+      const prevInvDetail = oldCh==="WFS" ? getInvDetail(prod) : '';
+      if(sales>10) analysis = ' <span style="color:#e67e22">⚠️ 日销'+sales+'单的热品变为Walmart自营，此后库存不可见'+(prevInvDetail?'（此前：'+prevInvDetail+'）':'')+'。若长期留在1P说明Walmart想自己控盘，建议关注你的替代品是否已准备就绪。</span>';
+      else analysis = ' <span style="color:#e67e22">⚠️ 变为Walmart自营，库存将不可见'+(prevInvDetail?'（此前：'+prevInvDetail+'）':'')+'。短期影响有限，但需跟踪是否长期留在1P。</span>';
+    }else if(newCh==="WFS"){
+      const invDetail = getInvDetail(prod);
+      const fromLabel = oldCh==="3P"?'从3P升级为WFS！':'从1P转为WFS！';
+      analysis = ' <span style="color:#27ae60">✅ '+fromLabel+'库存数据现已可见：'+(invDetail||'暂无库存数据')+'。'+(sales>0?'日销'+sales+'单，值得重点监控。':'')+'</span>';
+    }else if(newCh==="3P"&&oldCh==="WFS"){
+      const prevInvDetail = getInvDetail(prod);
+      analysis = ' <span style="color:#e67e22">⚠️ 从WFS降级为3P自配送，库存不再可见'+(prevInvDetail?'（此前：'+prevInvDetail+'）':'')+(sales>10?'。失去数据源后建议通过排名变化间接判断销量。':'。')+'</span>';
+    }
+    const imgT = img ? '<img class="sd-img" src="'+esc(img)+'" alt="" style="cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">' : '<div class="sd-img" style="display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">📦</div>';
+    const nameT = url ? '<a href="'+esc(url)+'" target="_blank">'+name+'</a>' : name;
+    h += '<div class="sd-item">'+imgT+'<div class="sd-info"><b style="color:#e67e22">渠道变更</b> '+oIcon+'→'+nIcon+'：'+nameT+analysis+'</div></div>';
+  });
+
+  // Seller changes (within same channel)
+  slChange.forEach(a => {
+    const img = a.image||"", url = a.link||"";
+    const displayName = a.shortName || (a.productName||"").substring(0,40) || a.itemId;
+    const name = esc(displayName);
+    const m = a.metrics||{};
+    const ch = a.channel||"3P";
+    const chLabel = CH_LABEL[chKey(ch)]||ch;
+    const prod = prodMap[a.itemId];
+    const sales = prod ? (prod.sales||0) : 0;
+    const sellerText = esc(m.oldSeller||"?")+' → '+esc(m.newSeller||"?");
+    let analysis = "";
+    if(ch==="WFS"){
+      analysis = ' <span style="color:#888">库存仍可信'+(sales>10?'（日销'+sales+'单），切换后关注价格是否波动。':'。')+'</span>';
+    }else if(ch==="3P"){
+      analysis = ' <span style="color:#888">可能是跟卖或账号调整'+(sales>10?'，日销'+sales+'单，建议抽查价格。':'。')+'</span>';
+    }else{
+      analysis = ' <span style="color:#888">影响有限。</span>';
+    }
+    const imgT = img ? '<img class="sd-img" src="'+esc(img)+'" alt="" style="cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">' : '<div class="sd-img" style="display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="event.stopPropagation();showTrend(\''+a.itemId+'\')" title="点击查看趋势">📦</div>';
+    const nameT = url ? '<a href="'+esc(url)+'" target="_blank">'+name+'</a>' : name;
+    h += '<div class="sd-item">'+imgT+'<div class="sd-info"><b>卖家变更</b> '+chLabel+'：'+nameT+' <span style="color:#666">['+sellerText+']</span>'+analysis+'</div></div>';
+  });
+
+  h += '</div>'; return h;
 }
 
 function gallery(products){
-  if(!products||products.length===0)return"";
-  let f=products;
-  if(stgFilter){f=f.filter(p=>stgFilter.has(p.itemId));}
-  else if(curGal==="anomaly")f=f.filter(p=>p.hasAnomaly);
-  else if(curGal==="sales")f=f.filter(p=>(p.sales||0)>0);
-  else if(curGal==="_1P")f=f.filter(p=>p.channel==="1P");
-  else if(curGal==="WFS")f=f.filter(p=>p.channel==="WFS");
-  else if(curGal==="_3P")f=f.filter(p=>p.channel==="3P");
-  else if(curGal==="comp")f=f.filter(p=>p.isCompetitor);
-  const s2=[...f].sort((a,b)=>(b.sales||0)-(a.sales||0));
-  if(s2.length===0)return'<div class="empty-state"><p>无匹配产品</p></div>';
-  let h='<div class="gh-row"><span style="font-size:13px;font-weight:700">📦 产品</span>';
-  [{id:"all",l:"全部"},{id:"comp",l:"🎯 竞对"},{id:"anomaly",l:"🔴 有异常"},{id:"sales",l:"有销量"},{id:"_1P",l:"🏪 1P"},{id:"WFS",l:"✅ WFS"},{id:"_3P",l:"⚠️ 3P"}].forEach(fi=>{h+='<button class="fbtn'+(curGal===fi.id?" on":"")+'" onclick="setGal(\''+fi.id+"')\">"+fi.l+"</button>";});
-  h+='<span style="font-size:10px;color:#999;margin-left:6px">'+s2.length+"个</span></div><div class="product-grid">";
-  s2.forEach(p=>{const img=p.image||"",url=p.link||"",name=esc(p.shortName||""),isW=p.channel==="WFS",isComp=p.isCompetitor;let cls=isW?"wfs":"wm";if(isComp)cls+=" comp";let badge="";if(p.hasAnomaly)badge='<span class="p-badge anomaly">!</span>';else if(!isW)badge='<span class="p-badge wm-badge">'+(p.channel==="1P"?"1P":"3P")+"</span>";let pr="";if(p.price){pr+='<span class="cur">$'+p.price.toFixed(2)+"</span>";if(p.prevPrice&&p.prevPrice!==p.price){const pct=(p.price-p.prevPrice)/p.prevPrice*100;pr+='<span class="prev">$'+p.prevPrice.toFixed(2)+"</span>";if(pct<0)pr+='<span class="drop">↓'+Math.abs(pct).toFixed(0)+"%</span>";else pr+='<span class="hike">↑'+pct.toFixed(0)+"%</span>";}}const icon=isComp?"🎯":CH_ICON[chKey(p.channel)]||"";const imgB=img?'<img class="p-img" src="'+esc(img)+'" alt="" loading="lazy" data-itemid="'+esc(p.itemId)+'">':'<div style="height:70px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#ddd">📦</div>';h+='<a class="pi '+cls+'" id="item-'+esc(p.itemId)+'" href="'+esc(url)+'" target="_blank" title="'+esc(p.productName||"")+'">'+badge+imgB+'<div class="p-name">'+icon+" "+name+"</div>"+((p.sales||0)>0?'<div class="p-sales">'+p.sales+" 单</div>":'<div class="p-sales" style="color:#ccc">-</div>')+(pr?'<div class="p-price-row">'+pr+"</div>":"")+'<div class="p-note">'+esc(p.brand||"")+(isComp?" · 竞对":"")+" · "+CH_LABEL[chKey(p.channel)]+"</div></a>";});
-  if(stgFilter)h='<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:6px 12px;margin-bottom:8px;font-size:12px;color:#856404">🔍 已筛选：仅显示策略相关的 '+s2.length+' 款产品 <a class="pl" href="javascript:void(0)" onclick="stgFilter=null;render()" style="margin-left:8px">✕ 清除</a></div>'+h;
-  return h+"</div>";
+  if(!products||products.length===0) return "";
+  let f = products;
+  if(stgFilter){f = f.filter(p => stgFilter.has(p.itemId));}
+  else if(curGal==="anomaly") f = f.filter(p => p.hasAnomaly);
+  else if(curGal==="sales") f = f.filter(p => (p.sales||0)>0);
+  else if(curGal==="_1P") f = f.filter(p => p.channel==="1P");
+  else if(curGal==="WFS") f = f.filter(p => p.channel==="WFS");
+  else if(curGal==="_3P") f = f.filter(p => p.channel==="3P");
+  else if(curGal==="comp") f = f.filter(p => p.isCompetitor);
+  const s2 = [...f].sort((a,b) => (b.sales||0)-(a.sales||0));
+  if(s2.length===0) return '<div class="empty-state"><p>无匹配产品</p></div>';
+  let h = '<div class="gh-row"><span style="font-size:13px;font-weight:700">📦 产品</span>';
+  [{id:"all",l:"全部"},{id:"comp",l:"🎯 竞对"},{id:"anomaly",l:"🔴 有异常"},{id:"sales",l:"有销量"},{id:"_1P",l:"🏪 1P"},{id:"WFS",l:"✅ WFS"},{id:"_3P",l:"⚠️ 3P"}].forEach(fi => {h += '<button class="fbtn'+(curGal===fi.id?' on':'')+'" onclick="setGal(\''+fi.id+'\')">'+fi.l+'</button>';});
+  h += '<span style="font-size:10px;color:#999;margin-left:6px">'+s2.length+'个</span></div><div class="product-grid">';
+  s2.forEach(p => {
+    const img = p.image||"", url = p.link||"", name = esc(p.shortName||""), isComp = p.isCompetitor;
+    const ch = p.channel||"3P";
+    let cls = ch==="WFS" ? "wfs" : (ch==="1P" ? "wfs" : "wm");
+    if(isComp) cls += " comp";
+    let badge = "";
+    if(p.hasAnomaly) badge = '<span class="p-badge anomaly">!</span>';
+    else if(ch==="3P") badge = '<span class="p-badge wm-badge">3P</span>';
+    let pr = "";
+    if(p.price){pr += '<span class="cur">$'+p.price.toFixed(2)+'</span>';
+      if(p.prevPrice&&p.prevPrice!==p.price){const pct=(p.price-p.prevPrice)/p.prevPrice*100;pr+='<span class="prev">$'+p.prevPrice.toFixed(2)+'</span>';if(pct<0)pr+='<span class="drop">↓'+Math.abs(pct).toFixed(0)+'%</span>';else pr+='<span class="hike">↑'+pct.toFixed(0)+'%</span>';}}
+    const imgB = img ? '<img class="p-img" src="'+esc(img)+'" alt="" loading="lazy" data-itemid="'+esc(p.itemId)+'"><div style="height:70px;display:none;align-items:center;justify-content:center;font-size:20px;color:#ddd">📦</div>' : '<div style="height:70px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#ddd">📦</div>';
+    const icon = isComp ? "🎯" : CH_ICON[chKey(ch)]||"";
+    h += '<a class="pi '+cls+'" id="item-'+esc(p.itemId)+'" href="'+esc(url)+'" target="_blank" title="'+esc(p.productName||"")+'">'+badge+imgB+'<div class="p-name">'+icon+' '+name+'</div>'+((p.sales||0)>0?'<div class="p-sales">'+p.sales+' 单</div>':'<div class="p-sales" style="color:#ccc">-</div>')+(pr?'<div class="p-price-row">'+pr+'</div>':'')+'<div class="p-note">'+esc(p.brand||"")+(isComp?' · 竞对':'')+' · '+CH_LABEL[chKey(ch)]+'</div></a>';
+  });
+  if(stgFilter) h = '<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:6px 12px;margin-bottom:8px;font-size:12px;color:#856404">🔍 已筛选：仅显示策略相关的 '+s2.length+' 款产品 <a class="pl" href="javascript:void(0)" onclick="stgFilter=null;render()" style="margin-left:8px">✕ 清除</a></div>' + h;
+  return h + '</div>';
 }
 
-let stgFilter=null;
-function showTrend(itemId){alert("趋势弹窗功能需加载历史数据。\n产品ID: "+itemId+"\n\n在完整版看板中可查看46天趋势。");}
-function setSev(s){curSev=s;document.querySelectorAll(".sbtn").forEach(b=>b.classList.toggle("on",b.dataset.sev===s));render();}
-function setGal(f){curGal=f;stgFilter=null;render();}
-function highlightProduct(itemId){setGal("all");setTimeout(()=>{const el=document.getElementById("item-"+itemId);if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.boxShadow="0 0 0 4px #e74c3c";el.style.transform="scale(1.05)";setTimeout(()=>{el.style.boxShadow="";el.style.transform=""},2000)}},100);}
-function showStgProducts(itemIds){stgFilter=new Set(itemIds);curGal="all";render();setTimeout(()=>{const first=document.getElementById("item-"+(itemIds[0]||""));if(first)first.scrollIntoView({behavior:"smooth",block:"center"})},200);}
-function collapseAll(){document.querySelectorAll(".sec-body").forEach(el=>el.classList.add("hide"));}
-function expandAll(){document.querySelectorAll(".sec-body").forEach(el=>el.classList.remove("hide"));}
-function onBrandChange(b){curBrand=b;render();}
+function showTrend(itemId){
+  let data = [];
+  for(let i=REPORTS.length-1;i>=0;i--){const prods=REPORTS[i].products||[];const match=prods.find(p=>p.itemId===itemId);if(match)data.push({date:REPORTS[i].date,sales:match.sales||0,price:match.price,revenue:match.revenue||0,channel:match.channel});}
+  if(data.length===0) return;
+  const maxS = Math.max(...data.map(d=>d.sales),1);
+  const pName = data[0].channel ? (CH_ICON[chKey(data[0].channel)]||"")+" " : "";
+  let h = '<button class="modal-close" onclick="closeTrend()">✕</button><h3>'+pName+esc(itemId)+'</h3><div style="font-size:11px;color:#999;margin-bottom:8px">'+data.length+'天趋势</div>';
+  // Sales chart
+  h += '<div class="mini-trend" style="height:80px;margin-bottom:4px">';
+  data.forEach(d => {const bh=Math.max(3,(d.sales/maxS)*70),cls=d.date===REPORTS[curIdx].date?"p t":"n";h+='<div class="mtw"><div class="mtb '+cls+'" style="height:'+bh+'px" title="'+d.date+': '+d.sales+'单"></div><span class="mtv">'+d.sales+'</span><span class="mtd">'+d.date.substring(5)+'</span></div>';});
+  h += '</div>';
+  // Table: date, sales, price, revenue
+  h += '<table style="width:100%;font-size:11px;border-collapse:collapse;margin-top:8px"><tr style="background:#f5f6fa"><th style="padding:4px;text-align:left">日期</th><th style="padding:4px;text-align:right">销量</th><th style="padding:4px;text-align:right">售价</th><th style="padding:4px;text-align:right">销售额</th></tr>';
+  data.forEach(d => {const isT=d.date===REPORTS[curIdx].date;h+='<tr'+(isT?' style="background:#fff9e6"':'')+'><td style="padding:3px 4px">'+d.date.substring(5)+'</td><td style="padding:3px 4px;text-align:right;font-weight:600">'+d.sales+'</td><td style="padding:3px 4px;text-align:right">'+(d.price?'$'+d.price.toFixed(2):'-')+'</td><td style="padding:3px 4px;text-align:right">$'+d.revenue.toFixed(0)+'</td></tr>';});
+  h += '</table>';
+  document.getElementById("trendMC").innerHTML = h;
+  document.getElementById("trendModal").classList.add("show");
+}
 
-init();
+async function goToDate(ds){const i=INDEX.findIndex(r=>r.date===ds);if(i>=0){curIdx=i;await loadDay(ds);cal();window.scrollTo({top:0,behavior:"smooth"});}}function closeTrend(){document.getElementById("trendModal").classList.remove("show");}
+function collapseAll(){document.querySelectorAll('.sec-body').forEach(el=>el.classList.add('hide'));}
+function expandAll(){document.querySelectorAll('.sec-body').forEach(el=>el.classList.remove('hide'));}
+function setSev(s){curSev=s;document.querySelectorAll(".sbtn").forEach(b=>b.classList.toggle("on",b.dataset.sev===s));render();}
+function setGal(f){curGal=f;stgFilter=null;document.querySelectorAll(".fbtn").forEach(b=>b.classList.remove("on"));render();}
+let stgFilter = null;
+function highlightProduct(itemId){setGal("all");stgFilter=null;setTimeout(()=>{const el=document.getElementById("item-"+itemId);if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.boxShadow="0 0 0 4px #e74c3c";el.style.transform="scale(1.05)";setTimeout(()=>{el.style.boxShadow="";el.style.transform=""},2000);}},100);}
+function showStgProducts(itemIds){stgFilter=new Set(itemIds);curGal="all";render();setTimeout(()=>{const first=document.getElementById("item-"+(itemIds[0]||""));if(first)first.scrollIntoView({behavior:"smooth",block:"center"});},200);}
+function onBrandChange(b){curBrand=b;curIdx=0;cal();0);}
+
+document.addEventListener("click",function(e){
+  const st=e.target.closest(".seller-toggle");if(st){st.classList.toggle("open");st.nextElementSibling.classList.toggle("show");return;}
+  const img=e.target.closest(".p-img");if(img&&img.dataset.itemid){e.preventDefault();e.stopPropagation();showTrend(img.dataset.itemid);}
+});
+document.addEventListener("keydown",function(e){if(e.key==="ArrowLeft"&&curIdx<REPORTS.length-1)go(curIdx+1);if(e.key==="ArrowRight"&&curIdx>0)go(curIdx-1);});
+
+window.onerror = function(m){document.body.innerHTML='<div style="padding:40px;color:red;"><h2>JS Error</h2><pre>'+m+'</pre></div>';};
+(async function init(){await init2();
+  const bs = document.getElementById("brandSel");
+  const allBrands = new Set();
+  REPORTS.forEach(r => (r.products||[]).forEach(p => {if(p.brand) allBrands.add(p.brand);}));
+  [...allBrands].sort((a,b) => {const ac=COMP_BRANDS.has(a)?0:1,bc=COMP_BRANDS.has(b)?0:1;if(ac!==bc)return ac-bc;return a.localeCompare(b);}).forEach(b => {const opt=document.createElement("option");opt.value=b;opt.textContent=b+(COMP_BRANDS.has(b)?" 🎯":"");bs.appendChild(opt);});
+  document.getElementById("ver").textContent="2026-06-16";
+  curMo = REPORTS[REPORTS.length-1].date.replace(/(\d+\/\d+)\/.*/,'$1');
+  let lastIdx = REPORTS.length-1; while(lastIdx>0 && REPORTS[lastIdx].summary.totalSales===0) lastIdx--;
+  try {cal();lastIdx);document.getElementById("footerInfo").textContent=REPORTS.length+"天 · "+allBrands.size+"品牌";}
+  catch(e){document.body.innerHTML='<div style="padding:40px;color:red;"><h2>Init Error</h2><pre>'+e.message+'</pre><pre>'+e.stack+'</pre></div>';}
+})();
+
 </script>
 </body>
 </html>
