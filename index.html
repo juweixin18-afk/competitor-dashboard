@@ -141,18 +141,17 @@ async function loadData(dateKey){
 }
 
 async function init(){
-  // Load index
   const resp=await fetch(BASE+"index.json");
-  INDEX=await resp.json();
+  const fullIndex=await resp.json();
+  INDEX=fullIndex.reports;
+  const allBrands=fullIndex.brands||[];
+  // Populate brand selector: competitors first
+  const bs=document.getElementById("brandSel");
+  const sorted=allBrands.sort((a,b)=>{const ac=COMP_BRANDS.has(a)?0:1,bc=COMP_BRANDS.has(b)?0:1;if(ac!==bc)return ac-bc;return a.localeCompare(b);});
+  sorted.forEach(b=>{const opt=document.createElement("option");opt.value=b;opt.textContent=b+(COMP_BRANDS.has(b)?" 🎯":"");bs.appendChild(opt);});
   // Set curMo from last date
   const lastDate=INDEX[INDEX.length-1].date;
   curMo=lastDate.replace(/(\d+\/\d+)\/.*/,"$1");
-  // Populate brand selector
-  const bs=document.getElementById("brandSel");
-  const allBrands=new Set();
-  INDEX.forEach(r=>{allBrands.add("placeholder")});
-  // Just use known brands
-  COMP_BRANDS.forEach(b=>{const opt=document.createElement("option");opt.value=b;opt.textContent=b+" 🎯";bs.appendChild(opt)});
   // Load last day with sales
   let lastIdx=INDEX.length-1;
   while(lastIdx>0&&INDEX[lastIdx].summary.totalSales===0)lastIdx--;
